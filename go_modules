@@ -192,7 +192,7 @@ def main():
 
         # remove extracted Go application source
         try:
-            to_remove = os.path.join(outdir, basename)
+            to_remove = os.path.join(outdir, basename.split(":")[-1])
             shutil.rmtree(to_remove)
         except FileNotFoundError as e:
             log.error(f"Could not remove directory not found {to_remove}")
