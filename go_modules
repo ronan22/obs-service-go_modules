@@ -54,6 +54,10 @@ parser.add_argument("--strategy", default="vendor")
 parser.add_argument("--archive")
 parser.add_argument("--outdir")
 parser.add_argument("--compression")
+parser.add_argument("--GOPRIVATE")
+parser.add_argument("--GODEBUG",   default="x509ignoreCN=0")
+parser.add_argument("--GOCACHE",   default="/tmp/GOCACHE")
+parser.add_argument("--GOPATH",    default="/tmp/GOPATH")
 args = parser.parse_args()
 
 outdir = args.outdir
@@ -140,10 +144,11 @@ def find_file(path, filename):
             return os.path.join(root, filename)
 
 
-def cmd_go_mod(cmd, dir):
+def cmd_go_mod(cmd, dir, env):
     try:
         log.info(f"go mod {cmd}")
-        output = check_output(["go", "mod", cmd], cwd=dir).decode("utf-8").strip()
+
+        output = check_output(["go", "mod", cmd], cwd=dir, env=env).decode("utf-8").strip()
         if output:
             log.info(output)
     except CalledProcessError as e:
@@ -168,10 +173,16 @@ def main():
         exit(1)
 
     if args.strategy == "vendor":
+        env=os.environ
+        if args.GOPRIVATE:
+            env["GOPRIVATE"]=args.GOPRIVATE
+        env["GODEBUG"]=args.GODEBUG
+        env["GOCACHE"]=args.GOCACHE
+        env["GOPATH"]=args.GOPATH
 
-        cmd_go_mod("download", go_mod_dir)
-        cmd_go_mod("verify", go_mod_dir)
-        cmd_go_mod("vendor", go_mod_dir)
+        cmd_go_mod("download", go_mod_dir, env)
+        cmd_go_mod("verify", go_mod_dir, env)
+        cmd_go_mod("vendor", go_mod_dir, env)
 
         log.info(f"Vendor go.mod dependencies to {vendor_tarname}")
         vendor_tarfile = os.path.join(outdir, vendor_tarname)

@@ -14,4 +14,16 @@
   <parameter name="compression">
     <description>Specify the source / vendor tarballs compression method. When using "tar" no compression is applied. Default: "gz".</description>
   </parameter>
+  <parameter name="GOPRIVATE">
+    <description>Comma-separated list of glob patterns</description>
+  </parameter>
+  <parameter name="GODEBUG">
+    <description>Enable various debugging facilities. default="x509ignoreCN=0"</description>
+  </parameter>
+  <parameter name="GOCACHE">
+    <description>The directory where the go command will store cached information for reuse in future builds. default="/tmp/GOCACHE"</description>
+  </parameter>
+  <parameter name="GOPATH">
+    <description>The Go path is used to resolve import statements. default="/tmp/GOPATH"</description>
+  </parameter>
 </service>
